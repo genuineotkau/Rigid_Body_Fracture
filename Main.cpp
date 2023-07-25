@@ -10,7 +10,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "RigidBody.h"
-#include "Game.h"
+#include "Simulation.h"
 #include "RigidBodyPicker.h"
 #include "MouseRaycasting.h"
 
@@ -21,7 +21,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void mouse_click_callback(GLFWwindow* window, int button, int action, int mods);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
-Game* createGame();
+Simulation* createSimulation();
 void DemoCollision();
 
 void Demo1();
@@ -54,7 +54,7 @@ glm::vec3 ray;
 glm::mat4 projection;
 glm::mat4 view;
 glm::vec3 deltaPos;
-Game* game;
+Simulation* simulation;
 Shader* mainShader;
 Model* objModel;
 //Model* cube = new Model(std::string("resources/objects/cube2.obj"));
@@ -111,8 +111,8 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    //Game& game = createGame();
-    game = createGame();
+    //Simulation& simulation = createSimulation();
+    simulation = createSimulation();
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -134,29 +134,29 @@ int main()
         projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = camera.GetViewMatrix();
 
-        for (int i = 0; i < game->objs.size(); ++i) {
-            game->objs[i]->shader->use();
-            game->objs[i]->shader->setVec3("viewPos", camera.Position);
+        for (int i = 0; i < simulation->objs.size(); ++i) {
+            simulation->objs[i]->shader->use();
+            simulation->objs[i]->shader->setVec3("viewPos", camera.Position);
         }
 
         if (triggerDemo3) {
-            for (int i = 0; i < game->objs.size(); ++i) {
-                if (game->objs[i]->position.y < -1) {
-                    game->objs[i]->SetSelect(true);
+            for (int i = 0; i < simulation->objs.size(); ++i) {
+                if (simulation->objs[i]->position.y < -1) {
+                    simulation->objs[i]->SetSelect(true);
                 }
             }
         }
 
-        game->UpdateAABB();
-        game->BuildBVH();
+        simulation->UpdateAABB();
+        simulation->BuildBVH();
         // render
         // update object positions
-        game->UpdatePositions(deltaTime);
+        simulation->UpdatePositions(deltaTime);
         if (!hideObjs)
-            game->Render(projection, view);
+            simulation->Render(projection, view);
         // for debug
         if (debug)
-            game->RenderTree(&(game->GetTreeRoot()), projection, view);
+            simulation->RenderTree(&(simulation->GetTreeRoot()), projection, view);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -230,25 +230,25 @@ void mouse_click_callback(GLFWwindow* window, int button, int action, int mods)
         switch (button)
         {
         case GLFW_MOUSE_BUTTON_LEFT:
-            game->ResetSelectStatus();
+            simulation->ResetSelectStatus();
             //ray = raycast.GenerateMouseRay(lastX, lastY, SCR_WIDTH, SCR_HEIGHT);
             ray = raycast.GenerateMouseRay2(lastX, lastY, SCR_WIDTH, SCR_HEIGHT, projection, view);
             //ray = glm::vec3(0.0, 0.0, -1);
-            //picker.Pick(game->objs, ray);
+            //picker.Pick(simulation->objs, ray);
             if (fireRay == 2) {
                 if (forceStrength > 10.0f) {
-                    for (int i = 0; i < game->objs.size(); ++i) {
-                        if (game->objs[i]->IsStatic()) continue;
+                    for (int i = 0; i < simulation->objs.size(); ++i) {
+                        if (simulation->objs[i]->IsStatic()) continue;
                         // change pieces and whole objects status 
-                        if (game->objs[i]->IsPieces())
-                            game->objs[i]->SetHide(false);
+                        if (simulation->objs[i]->IsPieces())
+                            simulation->objs[i]->SetHide(false);
                         else 
-                            game->objs[i]->SetHide(true);
+                            simulation->objs[i]->SetHide(true);
                     }
                 }
             }
 
-            rb = picker.Click(game, ray, deltaPos);
+            rb = picker.Click(simulation, ray, deltaPos);
             if (rb) {
                 if (fireRay == 1) {
                     rb->SetSelect(true);
@@ -263,9 +263,9 @@ void mouse_click_callback(GLFWwindow* window, int button, int action, int mods)
                     }
                     rb->ApplyForce(forceStrength * ray, duration);
 
-                    for (int i = 0; i < game->objs.size(); ++i) {
-                        if (game->objs[i]->IsHide() || game->objs[i]->IsStatic()) continue;
-                        game->objs[i]->ApplyG(g);
+                    for (int i = 0; i < simulation->objs.size(); ++i) {
+                        if (simulation->objs[i]->IsHide() || simulation->objs[i]->IsStatic()) continue;
+                        simulation->objs[i]->ApplyG(g);
                     }
                 }
             }
@@ -282,9 +282,9 @@ void mouse_click_callback(GLFWwindow* window, int button, int action, int mods)
 }
 
 
-Game* createGame()
+Simulation* createSimulation()
 {
-    game = new Game();
+    simulation = new Simulation();
     
     mainShader = new Shader("resources/shaders/shader_light.vs", "resources/shaders/shader_light.fs");
     objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj"));
@@ -292,9 +292,9 @@ Game* createGame()
 
     Shader* treeShader = new Shader("resources/shaders/shader_color.vs", "resources/shaders/shader_color.fs");
     Model* cube = new Model(std::string("resources/media/cube2.obj"));
-    game->SetLight(mainShader);
-    game->treeModel = cube;
-    game->treeShader = treeShader;
+    simulation->SetLight(mainShader);
+    simulation->treeModel = cube;
+    simulation->treeShader = treeShader;
 
     //Demo1();
     //Demo2();
@@ -306,8 +306,8 @@ Game* createGame()
     //Demo8();
 
 
-    game->SetBoundary();
-    return game;
+    simulation->SetBoundary();
+    return simulation;
 }
 
 
@@ -316,7 +316,7 @@ void Demo1()
     fireRay = 1;
     for (int i = 0; i < objModel->meshes.size(); ++i) {
         RigidBody* rb = new RigidBody(camera, mainShader, objModel, &objModel->meshes[i], glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.f), 1, glm::vec3(0, 0, 0), 0.0f, 1.0f);
-        game->objs.push_back(rb);
+        simulation->objs.push_back(rb);
     }
 }
 
@@ -324,26 +324,26 @@ void Demo1()
 void Demo2()
 {
     RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 12.0f, 0.0f), g, 1, glm::vec3(0, 1, 0), 0.0f, 1.0f);
-    game->objs.push_back(rb);
+    simulation->objs.push_back(rb);
     //for (int i = 0; i < objModel->meshes.size(); ++i) {
     //    RigidBody* rb = new RigidBody(camera, *mainShader, *objModel, objModel->meshes[i], glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, -9.8f, 0.f), 1, glm::vec3(0, 1, 0), 0.0f, 1.0f);
-    //    game->objs.push_back(rb);
+    //    simulation->objs.push_back(rb);
     //}
 }
 
 void Demo3()
 {
     RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 12.0f, 0.0f), g, 1, glm::vec3(0, 1, 0), 0.0f, 1.0f);
-    game->objs.push_back(rb);
+    simulation->objs.push_back(rb);
     triggerDemo3 = true;
 }
 
 void Demo4()
 {
     RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 12.0f, 0.0f), g, 1, glm::vec3(0, 1, 0), 0.0f, 1.0f);
-    game->objs.push_back(rb);
+    simulation->objs.push_back(rb);
     RigidBody* floor = new RigidBody(camera, mainShader, quad, nullptr, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1005, glm::vec3(1, 0, 0), 1.57f, 0.0f, true);
-    game->objs.push_back(floor);
+    simulation->objs.push_back(floor);
 }
 
 void Demo5()
@@ -354,7 +354,7 @@ void Demo5()
     for (int i = 0; i < objModel->meshes.size(); ++i) {
         RigidBody* rb = new RigidBody(camera, mainShader, objModel, &objModel->meshes[i], glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.f), 1, glm::vec3(0, 0, 0), 0.0f, 1.0f);
         rb->color = glm::vec3(rand() % 100 / (double)101, rand() % 100 / (double)101, rand() % 100 / (double)101);
-        game->objs.push_back(rb);
+        simulation->objs.push_back(rb);
     }
 }
 
@@ -371,7 +371,7 @@ void Demo7()
     mainShader->setBool("isColorMode", true);
     forceStrength = 15.0f;
     duration = 1.0f;
-    game->isCheckMode = true;
+    simulation->isCheckMode = true;
     DemoCollision();
 }
 
@@ -387,24 +387,24 @@ void DemoCollision()
 {
     fireRay = 2;
     RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.f), 1, glm::vec3(0, 0, 0), 0.0f, 1.0f);
-    game->objs.push_back(rb);
+    simulation->objs.push_back(rb);
     for (int i = 0; i < objModel->meshes.size(); ++i) {
         //if (i == 0 || i == 3) {
         if (true) {
             RigidBody* rb = new RigidBody(camera, mainShader, objModel, &objModel->meshes[i], glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.f), 0.6, glm::vec3(0, 0, 0), 0.0f, 1.0f);
             rb->SetHide(true); // initialy hide pieces 
-            game->objs.push_back(rb);
+            simulation->objs.push_back(rb);
         }
     }
 
     RigidBody* floor = new RigidBody(camera, mainShader, quad, nullptr, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1005, glm::vec3(1, 0, 0), 1.57f, 0.0f, true);
-    game->objs.push_back(floor);
+    simulation->objs.push_back(floor);
     RigidBody* ceil = new RigidBody(camera, mainShader, quad, nullptr, glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1005, glm::vec3(1, 0, 0), 1.57f, 0.0f, true);
-    game->objs.push_back(ceil);
+    simulation->objs.push_back(ceil);
     RigidBody* left = new RigidBody(camera, mainShader, quad, nullptr, glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1005, glm::vec3(0, 1, 0), 1.57f, 0.0f, true);
-    game->objs.push_back(left);
+    simulation->objs.push_back(left);
     RigidBody* right = new RigidBody(camera, mainShader, quad, nullptr, glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1005, glm::vec3(0, 1, 0), 1.57f, 0.0f, true);
-    game->objs.push_back(right);
+    simulation->objs.push_back(right);
     RigidBody* inner = new RigidBody(camera, mainShader, quad, nullptr, glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1005, glm::vec3(0, 1, 0), 0.0f, 0.0f, true);
-    game->objs.push_back(inner);
+    simulation->objs.push_back(inner);
 }

@@ -82,9 +82,9 @@ public:
 	}
 
 
-	RigidBody* Click(Game* game, const glm::vec3& rayDir, glm::vec3& delta)
+	RigidBody* Click(Simulation* simulation, const glm::vec3& rayDir, glm::vec3& delta)
 	{
-		BVHierarchy::Node* node = game->GetTreeRoot();
+		BVHierarchy::Node* node = simulation->GetTreeRoot();
 		Collision::Ray ray(this->camera->Position, rayDir);
 		float t;
 		glm::vec3 q;
@@ -98,7 +98,7 @@ public:
 		return res->data;
 
 
-		//auto bvh_nodes = game->GetLinearBVHNodes();
+		//auto bvh_nodes = simulation->GetLinearBVHNodes();
 		//std::stack<int> nodesToVisit;
 		//int cur_node_index = 0;
 		//while (true)

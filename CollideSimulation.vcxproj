@@ -141,7 +141,7 @@
     <ClCompile Include="BVHierarchy.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Dependencies\glad\src\glad.c" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -151,7 +151,7 @@
     <ClInclude Include="BVHierarchy.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="Simulation.h" />
     <ClInclude Include="MouseRaycasting.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Mesh.h" />
