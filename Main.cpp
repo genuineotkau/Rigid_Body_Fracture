@@ -40,7 +40,7 @@ const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 800;
 
 // camera
-Camera camera(glm::vec3(0.0f, 4.0f, 8.0f));
+Camera camera(glm::vec3(0.0f, 5.0f, 5.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -312,10 +312,10 @@ Simulation* createSimulation()
     simulation->treeShader = treeShader;
 
     //Demo1();
-    //Demo2();
+    Demo2();
     //Demo3();
     //Demo4();
-    Demo5();
+    //Demo5();
     //Demo6();
     //Demo7();
     //Demo8();
