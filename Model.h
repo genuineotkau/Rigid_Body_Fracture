@@ -1,3 +1,7 @@
+/**
+    Reference Material: https://blog.csdn.net/manipu1a/article/details/85340045
+**/
+
 #ifndef MODEL_H
 #define MODEL_H
 #define GLM_ENABLE_EXPERIMENTAL

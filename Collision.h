@@ -2,6 +2,10 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+/**
+	Referece material used: https://ceng2.ktu.edu.tr/~cakir/files/grafikler/rtcd.pdf
+**/
+
 namespace Collision
 {
 	struct Collider{};

@@ -3,6 +3,10 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
+/**
+    Referece material used: https://ceng2.ktu.edu.tr/~cakir/files/grafikler/rtcd.pdf
+**/
+
 inline float TriArea2D(float x1, float y1, float x2, float y2, float x3, float y3)
 {
 	return (x1 - x2) * (y2 - y3) - (x2 - x3) * (y1 - y2);
@@ -138,7 +142,7 @@ bool Collision::RayPlane(const Ray& ray, const Plane& p, float& t, glm::vec3& q)
 	return false;
 }
 
-// ray r = p + td, return t and q
+// ray r = o + td, return t and q
 bool Collision::RaySphere(const Ray& r, const Sphere& s, float& t, glm::vec3& q)
 {
 	glm::vec3 m = r.start - s.position;
@@ -156,7 +160,7 @@ bool Collision::RaySphere(const Ray& r, const Sphere& s, float& t, glm::vec3& q)
 	return true;
 }
 
-// ray r = p + td, return tmin and q
+// ray r = o + td, return tmin and q
 bool Collision::RayAABB(const Ray& r, const AABB& a, float& tmin, glm::vec3& q)
 {
 	tmin = 0.0f;

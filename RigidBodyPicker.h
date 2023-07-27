@@ -14,19 +14,19 @@ public:
 		camera = cam;
 	}
 
-	RigidBody* Pick(const vector<RigidBody*>& cloths, const glm::vec3& ray)
+	RigidBody* Pick(const vector<RigidBody*>& meshParts, const glm::vec3& ray)
 	{
-		// points on the cloth
-		RigidBody* selectedCloth = nullptr;
-		for (RigidBody* cloth : cloths)
+		// points on the meshPart
+		RigidBody* selectedMeshPart = nullptr;
+		for (RigidBody* meshPart : meshParts)
 		{
-			glm::vec3 pointLeftUpper = cloth->position;
+			glm::vec3 pointLeftUpper = meshPart->position;
 			float objWidth = .5f;
 			float objHeight = .5f;
 			glm::vec3 pointRightUpper = pointLeftUpper + glm::vec3(objWidth, 0, 0);
 			glm::vec3 pointRightBottom = pointLeftUpper + glm::vec3(objWidth, -objHeight, 0);
 
-			// normal vector of the cloth
+			// normal vector of the meshPart
 			glm::vec3 normal = glm::cross(pointRightBottom - pointLeftUpper, pointRightUpper - pointLeftUpper);
 			// hitPoint = camera.Position + ray * t
 			double t = glm::dot(pointLeftUpper - camera->Position, normal) / glm::dot(ray, normal);
@@ -34,16 +34,16 @@ public:
 			glm::vec3 hitPoint = camera->Position + glm::vec3(ray.x * t, ray.y * t, ray.z * t);
 			if (hitPoint.x >= pointLeftUpper.x && hitPoint.x <= pointRightUpper.x && hitPoint.y <= pointLeftUpper.y && hitPoint.y >= pointRightBottom.y)
 			{
-				// TODO: find the cloth closet to the camera
-				if (selectedCloth == nullptr)
+				// TODO: find the meshPart closet to the camera
+				if (selectedMeshPart == nullptr)
 				{
-					selectedCloth = cloth;
-					std::cout << "RididBody " << selectedCloth->mass << " Selected\n";
+					selectedMeshPart = meshPart;
+					std::cout << "RididBody " << selectedMeshPart->mass << " Selected\n";
 					break;
 				}
 			}
 		}
-		return selectedCloth;
+		return selectedMeshPart;
 	}
 
 	void Traversal(BVHierarchy::Node* node, const Collision::Ray& ray, BVHierarchy::Node*& res, float& tmin,  glm::vec3& intersection) {

@@ -15,6 +15,8 @@
 #include "MouseRaycasting.h"
 
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -38,7 +40,7 @@ const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 800;
 
 // camera
-Camera camera(glm::vec3(0.0f, 4.0f, 8.0f));
+Camera camera(glm::vec3(0.0f, 5.0f, 5.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -159,6 +161,19 @@ int main()
             simulation->RenderTree(&(simulation->GetTreeRoot()), projection, view);
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        // limit the frame rate to prevent the animation from going too fast
+        float target_frame_time = 1.0 / 85.0; // 85FPS
+        float frameEnd = glfwGetTime();
+        float frameTime = frameEnd - currentFrame; // time taken to process this frame
+        if (frameTime < target_frame_time)
+        {
+            float delayTime = target_frame_time - frameTime;
+            // convert delayTime from seconds to milliseconds, as required by the delay function
+            int delayMillis = static_cast<int>(delayTime * 1000);
+            std::this_thread::sleep_for(std::chrono::milliseconds(delayMillis));
+        }
+
     }
 
     glfwTerminate();

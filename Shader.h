@@ -9,6 +9,8 @@
 #include <sstream>
 #include <iostream>
 
+//From LearnOpenGL: https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/shader.h
+
 class Shader
 {
 public:

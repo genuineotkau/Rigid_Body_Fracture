@@ -1,4 +1,7 @@
 #version 450 core
+
+//Reference Material: https://blog.csdn.net/manipu1a/article/details/85340045
+
 out vec4 FragColor;
 
 struct Light {
