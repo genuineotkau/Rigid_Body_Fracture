@@ -177,7 +177,7 @@ void Simulation::UpdatePositions(GLfloat deltaTime)
 		if (objs[i]->IsHide()) continue;
 		RigidBody& obj = *objs[i];
 
-		if (!objs[i]->IsStatic()) {
+		if (!skipCheckStatic && !objs[i]->IsStatic()) {
 			//if (objs[i]->position.y < boundryY[0]) {
 			//	objs[i]->position.y = boundryY[0];
 			//}

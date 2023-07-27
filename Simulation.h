@@ -32,6 +32,7 @@ public:
 	Shader* treeShader;
 
 	bool isCheckMode = false;
+	bool skipCheckStatic = false;
 
 private:
 	bool CollectColliders(RigidBody* rb, std::vector<RigidBody*>& collisions);

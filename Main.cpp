@@ -40,7 +40,7 @@ const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 800;
 
 // camera
-Camera camera(glm::vec3(0.0f, 5.0f, 5.0f));
+Camera camera(glm::vec3(0.0f, 4.0f, 8.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -315,8 +315,8 @@ Simulation* createSimulation()
     //Demo2();
     //Demo3();
     //Demo4();
-    //Demo5();
-    Demo6();
+    Demo5();
+    //Demo6();
     //Demo7();
     //Demo8();
 
@@ -340,6 +340,7 @@ void Demo2()
 {
     RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 12.0f, 0.0f), g, 1, glm::vec3(0, 1, 0), 0.0f, 1.0f);
     simulation->objs.push_back(rb);
+    simulation->skipCheckStatic = true;
     //for (int i = 0; i < objModel->meshes.size(); ++i) {
     //    RigidBody* rb = new RigidBody(camera, *mainShader, *objModel, objModel->meshes[i], glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, -9.8f, 0.f), 1, glm::vec3(0, 1, 0), 0.0f, 1.0f);
     //    simulation->objs.push_back(rb);
@@ -350,6 +351,7 @@ void Demo3()
 {
     RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 12.0f, 0.0f), g, 1, glm::vec3(0, 1, 0), 0.0f, 1.0f);
     simulation->objs.push_back(rb);
+    simulation->skipCheckStatic = true;
     triggerDemo3 = true;
 }
 
@@ -366,6 +368,7 @@ void Demo5()
     srand(time(0));
     mainShader->use();
     mainShader->setBool("isColorMode", true);
+    simulation->isCheckMode = true;
     for (int i = 0; i < objModel->meshes.size(); ++i) {
         RigidBody* rb = new RigidBody(camera, mainShader, objModel, &objModel->meshes[i], glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.f), 1, glm::vec3(0, 0, 0), 0.0f, 1.0f);
         rb->color = glm::vec3(rand() % 100 / (double)101, rand() % 100 / (double)101, rand() % 100 / (double)101);

@@ -76,7 +76,7 @@ private:
 	bool collided;
 	bool isSelect;
 	bool isStatic;
-	bool isStop;
+	bool isStop = false;
 	bool isHide;
 };
 
