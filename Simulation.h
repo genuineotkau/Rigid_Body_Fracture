@@ -43,6 +43,7 @@ private:
 	void Traversal(BVHierarchy::Node* root,RigidBody* rb, vector<BVHierarchy::Node*>& res);
 
 	BVHierarchy::Node** tree;
+	//bounding box, index 0 is min, index 1 is max
 	float boundryX[2];
 	float boundryY[2];
 	float boundryZ[2];

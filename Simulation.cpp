@@ -245,6 +245,8 @@ void Simulation::Traversal(BVHierarchy::Node* node, RigidBody* rb, std::vector<B
 	//res.emplace_back(root);
 	if (rb == node->data)
 		return;
+
+	//check for collision AABB
 	bool isCollided = Collision::AABBAABB(rb->aabb, node->BV_AABB);
 	if (!isCollided) {
 		return;
@@ -300,7 +302,7 @@ void Simulation::PerformCollision(RigidBody* rb1, RigidBody* rb2)
 			return;
 		}
 
-		if (rb2->IsStatic()) {
+		if (rb2->IsStatic()) { // if wall, skip
 		}
 		else {
 			if (isCheckMode) {
@@ -316,6 +318,7 @@ void Simulation::PerformCollision(RigidBody* rb1, RigidBody* rb2)
 			glm::vec3 centersVector = (rb1_pos - rb2_pos);
 			centersVector = glm::normalize(centersVector);
 
+			// projection of their current velocity on the centersVector direction
 			glm::vec3 v1proj = glm::proj(rb1->velocity, centersVector);
 			glm::vec3 v2proj = glm::proj(rb2->velocity, centersVector);
 
@@ -340,6 +343,7 @@ void Simulation::PerformCollision(RigidBody* rb1, RigidBody* rb2)
 			float kfc_div_deltat = 0.1f;
 			float Ff_norm = rb1->mass * (v1n_final - v1n) * kfc_div_deltat * 2;//equals to obj2.mass * (v2n_final - v2n) * kfc_div_deltat
 
+			//calculate friction force
 			glm::vec3 Ff1 = Ff1_dir * Ff_norm;
 			glm::vec3 Ff2 = Ff2_dir * Ff_norm;
 

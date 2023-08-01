@@ -312,19 +312,21 @@ Simulation* createSimulation()
     simulation->treeShader = treeShader;
 
     //Demo1();
-    Demo2();
+    //Demo2();
     //Demo3();
     //Demo4();
     //Demo5();
     //Demo6();
     //Demo7();
-    //Demo8();
+    Demo8();
 
 
     simulation->SetBoundary();
     return simulation;
 }
 
+//Rigid body delcaration reference
+//RigidBody(camera, shader, model, mesh, position, velocity, mass, torque, rotationAngle, angularVel, isStatic);
 
 void Demo1()
 {
@@ -379,7 +381,7 @@ void Demo5()
 void Demo6()
 {
     forceStrength = 10.0f;
-    duration = 2.0f;
+    duration = 0.5f;
     DemoCollision();
 }
 
