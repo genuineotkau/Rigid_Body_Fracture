@@ -1,7 +1,10 @@
 #pragma once
-
+//#define DEBUG
 #include <glm/glm.hpp>
 #include "Camera.h"
+#include <iostream>
+
+// reference material: course PDF and https://antongerdelan.net/opengl/raycasting.html
 
 class MouseRaycasting
 {
@@ -22,6 +25,10 @@ public:
 	}
 
 	glm::vec3 GenerateMouseRay2(double x, double y, int scrWidth, int scrHeight, const glm::mat4& proj, const glm::mat4& view) {
+		#ifdef DEBUG
+		std::cout << "Mouse click screen pos x: " << x << " y: " << y << std::endl;
+		#endif
+
 		// these positions must be in range [-1, 1] (!!!), not [0, width] and [0, height]
 		float mouseX = x/ (scrWidth * 0.5f) - 1.0f;
 		float mouseY = y/ (scrHeight * 0.5f) - 1.0f;
@@ -41,7 +48,7 @@ private:
 	glm::vec3 GetNormalizedDeviceCoords(float x, float y, int scrWidth, int scrHeight)
 	{
 		float ndcX = (2.0f * x) / (double)scrWidth - 1.0f;
-		float ndcY = 1.0f - (2.0f * y) / (double)scrHeight;
+		float ndcY = 1.0f - (2.0f * y) / (double)scrHeight;	//y axis is flipped because it points down in screen space
 		float ndcZ = 1.0;
 		return glm::vec3(ndcX, ndcY, ndcZ);
 	}
