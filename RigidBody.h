@@ -18,6 +18,15 @@
 
 class RigidBody
 {
+private:
+	Camera* camera;
+	Model* model;
+	Mesh* mesh;
+	bool collided;
+	bool isSelect;
+	bool isStatic;
+	bool isStop = false;
+	bool isHide;
 public:
 	RigidBody(Camera& camera, Shader* shader, Model* model, Mesh* mesh, glm::vec3 position, glm::vec3 velocity, float mass,
 		glm::vec3 torque = glm::vec3(0, 0, 0), float rotationAngle = 0, float angularVel = 0, bool isStatic = false);
@@ -69,15 +78,6 @@ public:
 	
 
 	Shader* shader;
-private:
-	Camera* camera;
-	Model* model;
-	Mesh* mesh;
-	bool collided;
-	bool isSelect;
-	bool isStatic;
-	bool isStop = false;
-	bool isHide;
 };
 
 #endif

@@ -1,5 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#define FPS_LIMIT 70.0f
+#define FPS_LIMIT 25.0f
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -7,6 +7,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <stb_image/stb_image.h>
+#include <stb_image/stb_image_write.h>
+// animated GIF writer
+#include <GIF/gif.h>
 
 #include "Shader.h"
 #include "Camera.h"
@@ -20,6 +24,10 @@
 #include <thread>
 #include <chrono>
 #include <conio.h>
+
+// image loader and writer
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -38,14 +46,19 @@ void Demo6();
 void Demo7();
 void Demo8();
 
+// GIF recording params
+static bool globalRecording = false;
+static GifWriter globalGIFfile;
+constexpr int globalGIFdelay = 1;
+
 // settings
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 800;
+const unsigned int globalWidth = 1280;
+const unsigned int globalHeight = 800;
 
 // camera
 Camera camera(glm::vec3(0.0f, 5.0f, 5.0f));
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
+float lastX = globalWidth / 2.0f;
+float lastY = globalHeight / 2.0f;
 bool firstMouse = true;
 bool lockCam = false;
 // timing
@@ -75,6 +88,24 @@ float duration = 0.0f;
 float angularRatio = 0.1f;
 glm::vec3 g = glm::vec3(0.f, -1.98f, 0.f); /*virual gravitational acceleration, smaller to show effect*/
 
+// fast random number generator based pcg32_fast
+#include <stdint.h>
+#include <future>
+namespace PCG32 {
+    static uint64_t mcg_state = 0xcafef00dd15ea5e5u;	// must be odd
+    static uint64_t const multiplier = 6364136223846793005u;
+    uint32_t pcg32_fast(void) {
+        uint64_t x = mcg_state;
+        const unsigned count = (unsigned)(x >> 61);
+        mcg_state = x * multiplier;
+        x ^= x >> 22;
+        return (uint32_t)(x >> (22 + count));
+    }
+    float rand() {
+        return float(double(pcg32_fast()) / 4294967296.0);
+    }
+}
+
 int main()
 {
     // glfw: initialize and configure
@@ -84,7 +115,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw window creation
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "CollideSimulation", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(globalWidth, globalHeight, "CollideSimulation", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -96,6 +127,7 @@ int main()
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetMouseButtonCallback(window, mouse_click_callback);
+    void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods);
 
     // tell GLFW to capture our mouse
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -130,13 +162,13 @@ int main()
         lastFrame = currentFrame;
 
         // input
-        processInput(window);
+        glfwSetKeyCallback(window, key_callback);
 
         glClearColor(0.6f, 0.6f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // view/projection transformations
-        projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(camera.Zoom), (float)globalWidth / (float)globalHeight, 0.1f, 100.0f);
         view = camera.GetViewMatrix();
 
         for (int i = 0; i < simulation->objs.size(); ++i) {
@@ -165,6 +197,32 @@ int main()
         // for showing AABB
         if (showAABB)
             simulation->RenderTree(&(simulation->GetTreeRoot()), projection, view);
+
+        //GIF_Recording
+        if (globalRecording) {
+            // Create a buffer to hold the pixel data
+            std::vector<uint8_t> pixels(globalWidth * globalHeight * 4); // 4 for RGBA
+
+            // Read pixels from the framebuffer into the buffer
+            glReadPixels(0, 0, globalWidth, globalHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+
+            // gif library expects the data in a different order (top-to-bottom), 
+            // but OpenGL gives us the data bottom-to-top. So we need to flip the rows.
+            std::vector<uint8_t> flipped_pixels(globalWidth * globalHeight * 4);
+            for (int y = 0; y < globalHeight; ++y) {
+                for (int x = 0; x < globalWidth; ++x) {
+                    for (int c = 0; c < 4; ++c) {
+                        flipped_pixels[(y * globalWidth + x) * 4 + c] =
+                            pixels[((globalHeight - 1 - y) * globalWidth + x) * 4 + c];
+                    }
+                }
+            }
+
+            // Write the frame to the gif
+            GifWriteFrame(&globalGIFfile, flipped_pixels.data(), globalWidth, globalHeight, globalGIFdelay);
+        }
+
+
         glfwSwapBuffers(window);
         glfwPollEvents();
 
@@ -191,31 +249,61 @@ int main()
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-void processInput(GLFWwindow* window)
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        camera.ProcessKeyboard(DOWN, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        camera.ProcessKeyboard(UP, deltaTime);
-
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-        lockCam = !lockCam;
-    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-        hideObjs = !hideObjs;
-    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-        showAABB = !showAABB;
+    if (action == GLFW_PRESS || action == GLFW_REPEAT)
+    {
+        switch (key)
+        {
+        case GLFW_KEY_ESCAPE:
+            glfwSetWindowShouldClose(window, true);
+            break;
+        case GLFW_KEY_W:
+            camera.ProcessKeyboard(FORWARD, deltaTime);
+            break;
+        case GLFW_KEY_S:
+            camera.ProcessKeyboard(BACKWARD, deltaTime);
+            break;
+        case GLFW_KEY_A:
+            camera.ProcessKeyboard(LEFT, deltaTime);
+            break;
+        case GLFW_KEY_D:
+            camera.ProcessKeyboard(RIGHT, deltaTime);
+            break;
+        case GLFW_KEY_LEFT_SHIFT:
+            camera.ProcessKeyboard(DOWN, deltaTime);
+            break;
+        case GLFW_KEY_SPACE:
+            camera.ProcessKeyboard(UP, deltaTime);
+            break;
+        case GLFW_KEY_L:
+            lockCam = !lockCam;
+            break;
+        case GLFW_KEY_H:
+            hideObjs = !hideObjs;
+            break;
+        case GLFW_KEY_G:
+            showAABB = !showAABB;
+            break;
+        case GLFW_KEY_F:
+            if (!globalRecording) {
+                char fileName[1024];
+                sprintf_s(fileName, "output%d.gif", int(1000.0 * PCG32::rand()));
+                printf("Saving \"%s\"...\n", fileName);
+                GifBegin(&globalGIFfile, fileName, globalWidth, globalHeight, globalGIFdelay);
+                globalRecording = true;
+                printf("(Recording started)\n");
+            }
+            else {
+                GifEnd(&globalGIFfile);
+                globalRecording = false;
+                printf("(Recording done)\n");
+            }
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -257,8 +345,8 @@ void mouse_click_callback(GLFWwindow* window, int button, int action, int mods)
         {
         case GLFW_MOUSE_BUTTON_LEFT:
             simulation->ResetSelectStatus();
-            //ray = raycast.GenerateMouseRay(lastX, lastY, SCR_WIDTH, SCR_HEIGHT);
-            ray = raycast.GenerateMouseRay2(lastX, lastY, SCR_WIDTH, SCR_HEIGHT, projection, view);
+            //ray = raycast.GenerateMouseRay(lastX, lastY, globalWidth, globalHeight);
+            ray = raycast.GenerateMouseRay2(lastX, lastY, globalWidth, globalHeight, projection, view);
             //ray = glm::vec3(0.0, 0.0, -1);
             //picker.Pick(simulation->objs, ray);
             if (fireRay == 2) {
@@ -313,7 +401,7 @@ Simulation* createSimulation()
     simulation = new Simulation();
     
     mainShader = new Shader("resources/shaders/shader_light.vs", "resources/shaders/shader_light.fs");
-    //objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj"));
+    objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj"));
     objModel = new Model(std::string("resources/media/Teapot_Fractured.obj"));
     quad = new Model(std::string("resources/media/wall.obj"));
 
@@ -327,11 +415,11 @@ Simulation* createSimulation()
     //Demo1();
     //Demo2();
     //Demo3();
-    Demo4();
+    //Demo4();
     //Demo5();
     //Demo6();
     //Demo7();
-    //Demo8();
+    Demo8();
 
 
     simulation->SetBoundary();
@@ -372,7 +460,7 @@ void Demo3()
 
 void Demo4()
 {
-    RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 12.0f, 0.0f), g, 0.6, glm::vec3(0, 1, 0), 0.0f, 1.0f);
+    RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 12.0f, 0.0f), g, 1.0, glm::vec3(0, 1, 0), 0.0f, 1.0f);
     simulation->objs.push_back(rb);
     RigidBody* floor = new RigidBody(camera, mainShader, quad, nullptr, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1005, glm::vec3(1, 0, 0), 1.57f, 0.0f, true);
     simulation->objs.push_back(floor);
