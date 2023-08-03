@@ -43,6 +43,7 @@ void Simulation::SetBoundary()
 	// not hard-coded for the ability to scale
 	boundryX[0] = xmin; boundryX[1] = xmax;
 	boundryY[0] = ymin; boundryY[1] = ymax;
+	if (boundryY[0] == boundryY[1]) boundryY[1] = FLT_MAX;	// if no ceiling, set to FLT_MAX
 	boundryZ[0] = zmin; boundryZ[1] = zmax;
 
 	#ifdef DEBUG
@@ -135,7 +136,7 @@ void Simulation::BuildBVH()
 			toBuildObjs.push_back(objs[i]);
 	}
 	BVHierarchy::TopDownBVTree(tree, toBuildObjs, 0, toBuildObjs.size() - 1, 0);
-	BVHierarchy::Node* node = *tree;
+	//BVHierarchy::Node* node = *tree;
 }
 
 void Simulation::Render(const glm::mat4& projection, const glm::mat4& view)

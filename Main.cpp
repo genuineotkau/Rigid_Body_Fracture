@@ -1,5 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#define FPS_LIMIT 25.0f
+#define FPS_LIMIT 70.0f
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -7,8 +7,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <stb_image/stb_image.h>
-#include <stb_image/stb_image_write.h>
 // animated GIF writer
 #include <GIF/gif.h>
 
@@ -27,7 +25,9 @@
 
 // image loader and writer
 #define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image/stb_image.h"
+//#include "stb_image/stb_image_write.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -148,11 +148,10 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    //Simulation& simulation = createSimulation();
     simulation = createSimulation();
 
     // draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -164,6 +163,7 @@ int main()
         // input
         glfwSetKeyCallback(window, key_callback);
 
+        // background color
         glClearColor(0.6f, 0.6f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -402,7 +402,7 @@ Simulation* createSimulation()
     
     mainShader = new Shader("resources/shaders/shader_light.vs", "resources/shaders/shader_light.fs");
     objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj"));
-    objModel = new Model(std::string("resources/media/Teapot_Fractured.obj"));
+    //objModel = new Model(std::string("resources/media/Teapot_Fractured.obj"));
     quad = new Model(std::string("resources/media/wall.obj"));
 
     Shader* treeShader = new Shader("resources/shaders/shader_color.vs", "resources/shaders/shader_color.fs");

@@ -143,7 +143,6 @@
     <ClCompile Include="Dependencies\glad\src\glad.c" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="RigidBody.cpp" />
-    <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
