@@ -48,6 +48,38 @@ struct Texture {
     string path;
 };
 
+// Triangle struct to store vertices and compute normal, texCoords, tangent, and bitangent
+struct Triangle {
+    Vertex v0, v1, v2;
+    glm::vec3 center;
+    glm::vec3 normal;
+    glm::vec2 texCoords;
+    glm::vec3 tangent;
+    glm::vec3 bitangent;
+
+    Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2)
+        : v0(v0), v1(v1), v2(v2) {
+        // Compute center
+        center = (v0.Position + v1.Position + v2.Position) / 3.0f;
+
+        // Compute normal
+        glm::vec3 edge1 = v1.Position - v0.Position;
+        glm::vec3 edge2 = v2.Position - v0.Position;
+        normal = glm::normalize(glm::cross(edge1, edge2));
+
+        // Compute texCoords, tangent, and bitangent at the center using barycentric interpolation
+        // For the center of the triangle, each vertex contributes equally, so the weights are all 1/3
+        float weight0 = 1.0f / 3.0f;
+        float weight1 = 1.0f / 3.0f;
+        float weight2 = 1.0f / 3.0f;
+
+        texCoords = weight0 * v0.TexCoords + weight1 * v1.TexCoords + weight2 * v2.TexCoords;
+        tangent = glm::normalize(weight0 * v0.Tangent + weight1 * v1.Tangent + weight2 * v2.Tangent);
+        bitangent = glm::normalize(weight0 * v0.Bitangent + weight1 * v1.Bitangent + weight2 * v2.Bitangent);
+    }
+};
+
+
 class Mesh {
 public:
     // mesh Data
@@ -56,6 +88,7 @@ public:
     vector<Texture>      textures;
     Material             material;
     vector<glm::vec3>    verticePositions;
+    vector<Triangle> triangles;
     unsigned int VAO;
     unsigned int uniformBlockIndex; 
 
@@ -68,6 +101,17 @@ public:
         this->material = mat;
         for (int i = 0; i < vertices.size(); ++i) {
             verticePositions.push_back(vertices[i].Position);
+        }
+
+        if (indices.size() % 3 != 0) {
+			cout << "Error: indices number is not a multiple of 3" << endl;
+		}
+
+        for (int i = 0; i < indices.size(); i += 3) {
+            Vertex v0 = vertices[indices[i]];
+            Vertex v1 = vertices[indices[i + 1]];
+            Vertex v2 = vertices[indices[i + 2]];
+            triangles.push_back(Triangle(v0, v1, v2));
         }
 
         // now that we have all the required data, set the vertex buffers and its attribute pointers.

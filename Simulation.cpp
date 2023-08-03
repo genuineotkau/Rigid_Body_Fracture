@@ -6,6 +6,8 @@
 #include <glm/gtx/perpendicular.hpp>
 #include <glm/gtx/projection.hpp>
 
+//#define DEBUG
+
 
 Simulation::Simulation()
 {
@@ -36,9 +38,18 @@ void Simulation::SetBoundary()
 		if (objs[i]->position.z < zmin) zmin = objs[i]->position.z;
 		if (objs[i]->position.z > zmax) zmax = objs[i]->position.z;
 	}
+
+	// min and max value here should simply be floor, wall and ceiling, 
+	// not hard-coded for the ability to scale
 	boundryX[0] = xmin; boundryX[1] = xmax;
 	boundryY[0] = ymin; boundryY[1] = ymax;
 	boundryZ[0] = zmin; boundryZ[1] = zmax;
+
+	#ifdef DEBUG
+	std::cout << "Boundry X: " << boundryX[0] << " " << boundryX[1] << std::endl;
+	std::cout << "Boundry Y: " << boundryY[0] << " " << boundryY[1] << std::endl;
+	std::cout << "Boundry Z: " << boundryZ[0] << " " << boundryZ[1] << std::endl;
+	#endif
 }
 
 void Simulation::ResetSelectStatus()
@@ -48,6 +59,7 @@ void Simulation::ResetSelectStatus()
 	}
 }
 
+// Old method, Saved for reference
 void Simulation::UpdateAABB()
 {
 	for (int i = 0; i < this->objs.size(); i++) {
@@ -73,12 +85,45 @@ void Simulation::UpdateAABB()
 			}
 		}
 
+		//// If DEBUG is defined, print out the AABB
+		//#ifdef DEBUG
+		//	std::cout << "AABB min: " << this->objs[i]->aabb.min.x << " " << this->objs[i]->aabb.min.y << " " << this->objs[i]->aabb.min.z << std::endl;
+		//	std::cout << "AABB max: " << this->objs[i]->aabb.max.x << " " << this->objs[i]->aabb.max.y << " " << this->objs[i]->aabb.max.z << std::endl;
+		//#endif
+
 
 		//this->objs[i]->aabb.min = this->objs[i]->position + this->objs[i]->aabb.min;
 		//this->objs[i]->aabb.max = this->objs[i]->position + this->objs[i]->aabb.max;
 		//this->objs[i]->changedCollider = false;
 	}
 }
+
+//void Simulation::UpdateAABB()
+//{
+//	for (int i = 0; i < this->objs.size(); i++) {
+//		if (objs[i]->IsHide()) continue;
+//
+//		this->objs[i]->aabb = BoundingVolume::createAABB(this->objs[i]->GetVerticePositions());
+//		this->objs[i]->offsetY = .0f - objs[i]->aabb.min.y;
+//
+//		// Get a copy of the original vertices
+//		std::vector<glm::vec3> vertices = this->objs[i]->GetVerticePositions();
+//
+//		glm::mat4 model(1.0f);
+//		model = glm::translate(model, this->objs[i]->position);
+//		if (glm::length(this->objs[i]->torque) != 0)
+//			model = glm::rotate(model, this->objs[i]->rotationAngle, this->objs[i]->torque);
+//
+//		// Transform all vertices
+//		for (glm::vec3& vertex : vertices) {
+//			vertex = glm::vec3(model * glm::vec4(vertex, 1.0));
+//		}
+//
+//		// Compute the AABB from the transformed vertices
+//		//this->objs[i]->offsetY = .0f - objs[i]->aabb.min.y;
+//		this->objs[i]->aabb = BoundingVolume::createAABB(vertices);
+//	}
+//}
 
 void Simulation::BuildBVH()
 {
@@ -198,7 +243,7 @@ void Simulation::UpdatePositions(GLfloat deltaTime)
 				objs[i]->velocity.y *= attenuation;
 				objs[i]->angularVel *= angleAttenuation;
 			}
-			else if (objs[i]->position.y < boundryY[0] + thresh && objs[i]->velocity.y < 0) {
+			else if (objs[i]->position.y < boundryY[0] - thresh && objs[i]->velocity.y < 0) {
 				objs[i]->velocity.y *= attenuation;
 				objs[i]->angularVel *= angleAttenuation;
 			}
@@ -214,17 +259,38 @@ void Simulation::UpdatePositions(GLfloat deltaTime)
 
 			if (abs(objs[i]->velocity.y) < smallVelocity && abs(objs[i]->position.y - boundryY[0]) < 0.1f) {
 				objs[i]->rotationAngle = 0.0f;
+				//objs[i]->angularVel = objs[i]->angularVel * 0.2f;
+				//objs[i]->velocity = objs[i]->velocity * 0.2f;
 				objs[i]->angularVel = 0.0f;
-				objs[i]->velocity.x = objs[i]->velocity.y = objs[i]->velocity.z = 0.0f;
+				objs[i]->velocity.x = 0.0f;
+				objs[i]->velocity.y = 0.0f;
+				objs[i]->velocity.z = 0.0f;
 				
+				//If obj is in the floor, or walls, move it out
 				objs[i]->position.y = boundryY[0] + objs[i]->offsetY; //2* thresh;
+				/*if(objs[i]->position.x < boundryX[0])
+					objs[i]->position.x = boundryX[0];
+				else if (objs[i]->position.x > boundryX[1])
+					objs[i]->position.x = boundryX[1];
+				if (objs[i]->position.z < boundryZ[0])
+					objs[i]->position.z = boundryZ[0];
+				else if (objs[i]->position.z > boundryZ[1])
+					objs[i]->position.z = boundryZ[1];*/
 
-				objs[i]->SetStop(true);
+				//if(glm::length(objs[i]->velocity) < 0.005)
+					objs[i]->SetStop(true);
 			}
 			obj.Move(0.05);
+			//UpdateAABB();
 		}
+		// if in DEBUG mode, print out the obj velocity
+		#ifdef DEBUG
+		if(!obj.IsHide() && !obj.IsStatic() && !obj.IsStop())
+			std::cout << "obj " << i << " velocity: " << objs[i]->velocity.x << ", " << objs[i]->velocity.y << ", " << objs[i]->velocity.z << std::endl;
+		#endif
 		obj.UpdateVelocity(deltaTime);
 		obj.Move(deltaTime);
+		//UpdateAABB();
 	}
 
 	for (int i = 0; i < objs.size(); i++) {
@@ -312,6 +378,8 @@ void Simulation::PerformCollision(RigidBody* rb1, RigidBody* rb2)
 				rb2->SetStop(true);
 				return;
 			}
+
+			float attenuation = 1.0f;
 			//glm::vec3 centersVector = (rb1->position - rb2->position);
 			glm::vec3 rb1_pos = 0.5f * (rb1->aabb.min + rb1->aabb.max);
 			glm::vec3 rb2_pos = 0.5f * (rb2->aabb.min + rb2->aabb.max);
@@ -336,8 +404,8 @@ void Simulation::PerformCollision(RigidBody* rb1, RigidBody* rb2)
 				Ff2_dir = glm::normalize(-(rb2->velocity - v2proj));
 			}
 
-			rb1->velocity = (rb1->velocity - v1proj) + (v1n_final * glm::normalize(centersVector));
-			rb2->velocity = (rb2->velocity - v2proj) + (v2n_final * glm::normalize(centersVector));
+			rb1->velocity = attenuation * ((rb1->velocity - v1proj) + (v1n_final * glm::normalize(centersVector)));
+			rb2->velocity = attenuation * ((rb2->velocity - v2proj) + (v2n_final * glm::normalize(centersVector)));
 
 			//Ff = kfc * (m * (deltav)/(deltat))
 			float kfc_div_deltat = 0.1f;
@@ -353,15 +421,16 @@ void Simulation::PerformCollision(RigidBody* rb1, RigidBody* rb2)
 			rb1->torque += torque1;
 			rb2->torque += torque2;
 
-			float alpha1 = glm::length(rb1->torque) / (1. * rb1->mass * (0.93) * (0.93));//I = 2/5 * m * r^2
-			float alpha2 = glm::length(rb2->torque) / (1. * rb2->mass * (0.93) * (0.93));//I = 2/5 * m * r^2
+			float alpha1 = glm::length(rb1->torque) / (2.0f/5.0f * rb1->mass * (0.93) * (0.93));//I = 2/5 * m * r^2
+			float alpha2 = glm::length(rb2->torque) / (2.0f/5.0f * rb2->mass * (0.93) * (0.93));//I = 2/5 * m * r^2
 
-			rb1->angularVel = alpha1;
-			rb2->angularVel = alpha2;
+			rb1->angularVel = attenuation * alpha1;
+			rb2->angularVel = attenuation * alpha2;
+
+			// Move() time step can be changed to anything that makes sense
 			rb1->Move(0.1);
 			rb2->Move(0.1);
-			//rb1->Move(0.000001);
-			//rb2->Move(0.000001);
+			//UpdateAABB();
 		}
 
 	}

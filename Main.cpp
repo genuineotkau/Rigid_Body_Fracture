@@ -1,4 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#define FPS_LIMIT 70.0f
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -17,6 +19,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <conio.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -65,7 +68,7 @@ Model* quad;
 bool hideObjs = false;
 // 0: not generate ray, 1: generate ray but not apply force, 2: generate ray and apply force
 int fireRay = 0;
-bool debug = false;
+bool showAABB = true;
 bool triggerDemo3 = false;
 float forceStrength = 0.0f;
 float duration = 0.0f;
@@ -151,19 +154,22 @@ int main()
 
         simulation->UpdateAABB();
         simulation->BuildBVH();
+
+
+        
         // render
         // update object positions
         simulation->UpdatePositions(deltaTime);
         if (!hideObjs)
             simulation->Render(projection, view);
-        // for debug
-        if (debug)
+        // for showing AABB
+        if (showAABB)
             simulation->RenderTree(&(simulation->GetTreeRoot()), projection, view);
         glfwSwapBuffers(window);
         glfwPollEvents();
 
         // limit the frame rate to prevent the animation from going too fast
-        float target_frame_time = 1.0 / 85.0; // 85FPS
+        float target_frame_time = 1.0 / FPS_LIMIT;
         float frameEnd = glfwGetTime();
         float frameTime = frameEnd - currentFrame; // time taken to process this frame
         if (frameTime < target_frame_time)
@@ -177,6 +183,11 @@ int main()
     }
 
     glfwTerminate();
+
+    // Wait for user input before closing the console
+    std::cout << "Press any key to exit...";
+    _getch();
+
     return 0;
 }
 
@@ -204,7 +215,7 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
         hideObjs = !hideObjs;
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-        debug = !debug;
+        showAABB = !showAABB;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -302,11 +313,13 @@ Simulation* createSimulation()
     simulation = new Simulation();
     
     mainShader = new Shader("resources/shaders/shader_light.vs", "resources/shaders/shader_light.fs");
-    objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj"));
+    //objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj"));
+    objModel = new Model(std::string("resources/media/Teapot_Fractured.obj"));
     quad = new Model(std::string("resources/media/wall.obj"));
 
     Shader* treeShader = new Shader("resources/shaders/shader_color.vs", "resources/shaders/shader_color.fs");
     Model* cube = new Model(std::string("resources/media/cube2.obj"));
+    //Model* cube = new Model(std::string("resources/media/teapot.obj"));
     simulation->SetLight(mainShader);
     simulation->treeModel = cube;
     simulation->treeShader = treeShader;
@@ -314,11 +327,11 @@ Simulation* createSimulation()
     //Demo1();
     //Demo2();
     //Demo3();
-    //Demo4();
+    Demo4();
     //Demo5();
     //Demo6();
     //Demo7();
-    Demo8();
+    //Demo8();
 
 
     simulation->SetBoundary();
@@ -359,7 +372,7 @@ void Demo3()
 
 void Demo4()
 {
-    RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 12.0f, 0.0f), g, 1, glm::vec3(0, 1, 0), 0.0f, 1.0f);
+    RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 12.0f, 0.0f), g, 0.6, glm::vec3(0, 1, 0), 0.0f, 1.0f);
     simulation->objs.push_back(rb);
     RigidBody* floor = new RigidBody(camera, mainShader, quad, nullptr, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1005, glm::vec3(1, 0, 0), 1.57f, 0.0f, true);
     simulation->objs.push_back(floor);
@@ -409,12 +422,9 @@ void DemoCollision()
     RigidBody* rb = new RigidBody(camera, mainShader, objModel, nullptr, glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.f), 1, glm::vec3(0, 0, 0), 0.0f, 1.0f);
     simulation->objs.push_back(rb);
     for (int i = 0; i < objModel->meshes.size(); ++i) {
-        //if (i == 0 || i == 3) {
-        if (true) {
-            RigidBody* rb = new RigidBody(camera, mainShader, objModel, &objModel->meshes[i], glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.f), 0.6, glm::vec3(0, 0, 0), 0.0f, 1.0f);
-            rb->SetHide(true); // initialy hide pieces 
-            simulation->objs.push_back(rb);
-        }
+        RigidBody* rb = new RigidBody(camera, mainShader, objModel, &objModel->meshes[i], glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.f, 0.0f, 0.f), 0.6, glm::vec3(0, 0, 0), 0.0f, 1.0f);
+        rb->SetHide(true); // initialy hide pieces 
+        simulation->objs.push_back(rb);
     }
 
     RigidBody* floor = new RigidBody(camera, mainShader, quad, nullptr, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1005, glm::vec3(1, 0, 0), 1.57f, 0.0f, true);
