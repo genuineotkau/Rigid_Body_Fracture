@@ -420,7 +420,6 @@ void Simulation::PerformCollision(RigidBody* rb1, RigidBody* rb2)
 			rb1->velocity = attenuation_trans * ((rb1->velocity - v1proj) + (v1n_final * glm::normalize(centersVector)));
 			rb2->velocity = attenuation_trans * ((rb2->velocity - v2proj) + (v2n_final * glm::normalize(centersVector)));
 
-			//Ff = kfc * (m * (deltav)/(deltat))
 			float kfc_div_deltat = 0.1f;
 			float Ff_norm = rb1->mass * (v1n_final - v1n) * kfc_div_deltat * 2;//equals to obj2.mass * (v2n_final - v2n) * kfc_div_deltat
 
