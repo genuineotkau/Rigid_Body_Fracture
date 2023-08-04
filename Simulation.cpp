@@ -216,7 +216,7 @@ void Simulation::RenderTree(BVHierarchy::Node** tree, const glm::mat4& projectio
 	treeShader->setVec3("color", colour);
 	//Draw
 	if (node->type != BVHierarchy::Node::Type::INTERNAL)
-	treeModel->DrawBoundingVolume();
+		treeModel->DrawBoundingVolume();
 	RenderTree(&node->lChild, projection, view);
 	RenderTree(&node->rChild, projection, view);
 }

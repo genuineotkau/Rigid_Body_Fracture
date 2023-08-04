@@ -3,6 +3,10 @@
 #include "BoundingVolume.h"
 #include "Collision.h"
 
+/**
+	Referece material used: https://ceng2.ktu.edu.tr/~cakir/files/grafikler/rtcd.pdf
+**/
+
 namespace BVHierarchy
 {
 	struct Node
@@ -29,8 +33,5 @@ namespace BVHierarchy
 	void TopDownBVTree(Node** tree, std::vector<RigidBody*>& objects, int startIndex, int endIndex, int depth);
 	float GetHeuristicCost(std::vector<RigidBody*>& objects, int startIndex, int split, int endIndex);
 	int PartitionObjects(std::vector<RigidBody*>& objects, int startIndex, int endIndex);
-
-	int FindIndexClosestToPoint(std::vector<RigidBody*>& objects, float point, int startIndex, int endIndex, char axis);
-	int FindIndexWithExtents(std::vector<RigidBody*>& objects, float extent, int startIndex, int endIndex, char axis, bool renderSphere);
 }
 

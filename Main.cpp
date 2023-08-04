@@ -345,10 +345,7 @@ void mouse_click_callback(GLFWwindow* window, int button, int action, int mods)
         {
         case GLFW_MOUSE_BUTTON_LEFT:
             simulation->ResetSelectStatus();
-            //ray = raycast.GenerateMouseRay(lastX, lastY, globalWidth, globalHeight);
             ray = raycast.GenerateMouseRay2(lastX, lastY, globalWidth, globalHeight, projection, view);
-            //ray = glm::vec3(0.0, 0.0, -1);
-            //picker.Pick(simulation->objs, ray);
             if (fireRay == 2) {
                 // determine if force is big enough to "break" objects
                 if (forceStrength > 10.0f) {
@@ -413,14 +410,14 @@ Simulation* createSimulation()
     simulation->treeModel = cube;
     simulation->treeShader = treeShader;
 
-    //Demo1();
+    Demo1();
     //Demo2();
     //Demo3();
     //Demo4();
     //Demo5();
     //Demo6();
     //Demo7();
-    Demo8();
+    //Demo8();
 
 
     simulation->SetBoundary();

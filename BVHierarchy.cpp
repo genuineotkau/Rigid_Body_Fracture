@@ -1,5 +1,9 @@
 #include "BVHierarchy.h"
 
+/**
+	Referece material used: https://ceng2.ktu.edu.tr/~cakir/files/grafikler/rtcd.pdf
+**/
+
 namespace BVHierarchy
 {
 	bool compareX(RigidBody* a, RigidBody* b) { return a->position.x < b->position.x; }
@@ -104,58 +108,6 @@ namespace BVHierarchy
 		}
 		// else already sorted in z axis
 		return startIndex + numObjects / 2; //MEDIAN SPLIT
-	}
-
-	int FindIndexClosestToPoint(std::vector<RigidBody*>& objects, float point, int startIndex, int endIndex, char axis)
-	{
-		float minDist = FLT_MAX;
-		int closestIndex = startIndex;
-		for (int i = startIndex; i <= endIndex; ++i)
-		{
-			float dist = 0;
-			if (axis == 'x')
-				dist = abs(objects[i]->position.x - point);
-			else if (axis == 'y')
-				dist = abs(objects[i]->position.y - point);
-			else
-				dist = abs(objects[i]->position.z - point);
-			if (dist < minDist)
-			{
-				minDist = dist;
-				closestIndex = i;
-			}
-		}
-		return closestIndex;
-	}
-
-	int FindIndexWithExtents(std::vector<RigidBody*>& objects, float extent, int startIndex, int endIndex, char axis, bool renderSphere)
-	{
-		float minDist = FLT_MAX;
-		int closestIndex = startIndex;
-		for (int i = startIndex; i <= endIndex; ++i)
-		{
-			float dist = 0;
-
-			if (axis == 'x')
-			{
-				dist = std::min(abs(objects[i]->position.x - objects[i]->aabb.min.x - extent), abs(objects[i]->position.x + objects[i]->aabb.max.x - extent));
-			}
-			else if (axis == 'y')
-			{
-				dist = std::min(abs(objects[i]->position.y - objects[i]->aabb.min.y - extent), abs(objects[i]->position.y + objects[i]->aabb.max.y - extent));
-			}
-			else
-			{
-				dist = std::min(abs(objects[i]->position.z - objects[i]->aabb.min.z - extent), abs(objects[i]->position.z + objects[i]->aabb.max.z - extent));
-			}
-
-
-			if (dist == 0.f)
-			{
-				return i; //return first object with that extent break out of loop
-			}
-		}
-		return -1; //error the extents passed in do not belong to any of the objects
 	}
 
 }

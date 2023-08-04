@@ -20,9 +20,20 @@ In Main.cpp, you can easily umcomment the code piece to see the result of differ
 
 ### Data Structures <br />
 **RigidBody** <br />
-The representation of rigid body which contains object models, positions, and information regarding dynamics such as linear velocity, angular velocity <br />
+The representation of rigid body which contains object models, positions, axis-aligned bounding box (AABB) and information regarding dynamics such as linear velocity, angular velocity <br />
 ![RidgidBody](RigidBody.png) <br />
 
+**SAH-BVH** <br />
+A top-down constructed Bounding Volume Hireharchy Tree that contains all objects. Each leaf node contains one rigid body. The split is chosen to minimize the total surface area of the two new volumes, as estimated by the Surface Area Heuristic (SAH). This data structure is crucial for both ray-AABB intersection, and AABB-AABB intersection, which are the two most important ways of collision in this project.
+![BVH](SAH-BVH.png) <br />
+
+**Bounding Volume** <br />
+Simple AABB bounding volume was used in this project
+![AABB](AABB.png) <br />
+
+**Colliders** <br />
+There are only two colliders in this project: Ray and AABB bounding box
+![Collision](Collision.png) <br />
 
 
 
@@ -33,8 +44,24 @@ The representation of rigid body which contains object models, positions, and in
 
 
 
-
-
+## Demo Screenshots <br />
+**Demo 1** <br />
+![DEMO!](Demo1.gif) <br />
+**Demo 2** <br />
+![DEMO!](Demo2.gif) <br />
+**Demo 3** <br />
+![DEMO!](Demo3.gif) <br />
+**Demo 4** <br />
+![DEMO!](Demo4.gif) <br />
+**Demo 5** <br />
+![DEMO!](Demo5.gif) <br />
+**Demo 6** <br />
+![DEMO!](Demo6.gif) <br />
+**Demo 7** <br />
+![DEMO!](Demo7.gif) <br />
+**Demo 8** <br />
+![DEMO!](Demo8_Cube.gif) <br />
+![DEMO!](Demo8_Teapot.gif) <br />
 
 
 

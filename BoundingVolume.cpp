@@ -22,12 +22,7 @@ namespace BoundingVolume
 
 	glm::vec3 getExtents(RigidBody* obj)
 	{
-
 		glm::vec3 result = (obj->aabb.max - obj->aabb.min) / 2.0f;
-		result.x = abs(result.x);
-		result.y = abs(result.y);
-		result.z = abs(result.z);
-
 		return result;
 	}
 }
