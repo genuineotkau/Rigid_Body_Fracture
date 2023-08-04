@@ -10,7 +10,7 @@ In this project, I implemented a fracture simulation using the pre-fractured mod
 ## How to run program
 The program should be built/run on Windows 10/11 with a either Visual Studio 2019 or 2022. Any graphics card that come with OpenGL 4.6 should be able to run this program without any problems(tested across different Windows PCs). My apologies for not having a proper Makefile; my time to finish the project was quite tight.
 
-After opening the CollodeSimulation.sln, simply use the DEBUG/RELEASE mode to run the program. There no command line parameters required.
+After opening the CollodeSimulation.sln, simply use the DEBUG/RELEASE mode to run the program. There are no command line parameters required.
 
 In Main.cpp, you can easily uncomment the code piece to see the result of different objective demo and change the object(objModel) loaded by the program.
 
@@ -71,17 +71,17 @@ The only one that's relevant to the demonstration purpose is FPS_LIMIT(defined o
 
 ### ***Imperfections*** <br />
 BUGS:<br />
-(1) Raycasting seems to be highlighting the wrong piece of the object. Initially, I thought it is due to the program not being able to identify which rigid body is closer to the ray if multiple hits are detected, but most of the time it's just a completely irrelevant rigid body being highted. I haven't figure out what's the root cause yet. <br />
+(1) Raycasting seems to be highlighting the wrong piece of the object sometimes. Initially, I thought it is due to the program not being able to identify which rigid body is closer to the ray if multiple hits are detected, but most of the time it's just a completely irrelevant rigid body being highted. I haven't figure out what's the root cause yet. <br />
 (2) I have a FPS limiter implemented in main.cpp, and whenever the FPS is small(smaller than 30), some debris could penetrate the floor to "sink" below y = -1.0f. The reason why this happens is that when the FPS is small, delta time is large. Hence, the time segment between each check for collision is large, leading to a more possible case that the program didn't identify the collision. I haven't found an elegant way to resolve this yet, and I've tried pulling them up when it's detected to go beneath the floor but it doesn't look elegant at all.<br />
 (3) You might have noticed that when a rigid body is about to come to a stop, it sometimes suddenly "teleports" to a position on the floor. It's actually more like a "hack" than a bug, since if I don't implement this "hack", the rigid body will somehow always retain a small velocity and moves indefinitely. <br /><br />
 Compromises I made for this project: <br />
 (1) Like what  you can see in the demo gif/video, the way that I'm implementing the rigid body simulation is not quite proper. I've only used ray-aabb and aabb-aabb intersection for collision detection, meaning that it's not accurate, since aabb is merely a bounding box. The collision of aabb bounding box doesn't necessarily lead to the collision between two objects. Narrow phase collision detection is not completed. <br /><br />
-![rigid_body_wall](rigid_body_wall.png) <br /> <br />
+![rigid_body_wall](rigid_body_wall.png) <br /> 
 (collision between rigid body and the wall, I simply added attenuation factor to velocity to make it "bounce back")<br /><br />
 (2) Since the narrow phase collision detection is not completed, an accurate hit point between two objects cannot be obtained. You might observe that two objects suddenly pull away from each other even if they are not "actually colliding". <br />
 (3) Despite the outcome of demo8 looks somewhat presentable, but if you look into my code, you will find some places that I have to hard-code some value in order for the outcome to look reasonable. I think it's mainly due to the fact that a precise hitpoint cannot be obtained with my implementation. <br />
-![inertia](inertia.png) <br /> <br />
-(One of the example can be, when handling the collision between debris, in "Simulation::PerformCollision", the radius has to be hard-coded to a number that's around 0.95 for it to work properly)<br />
+![inertia](inertia.png) <br /> 
+(One of the example can be, when handling the collision between debris and updating their angular velocity using inertia in "Simulation::PerformCollision" , the radius has to be hard-coded to a number that's around 0.95 for it to work properly) <br /> <br />
 (3) In the proposal, I state that I will be doing the coloring down to triangle level for objective 1,2 and 3, but I ended up simply using ray-aabb intersection to select and object and then color the rigid body, instead of doing ray-triangle intersection to color the triangle.
 
 
