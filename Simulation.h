@@ -10,9 +10,6 @@ class Simulation
 public:
 	Simulation();
 
-	//std::vector<ShaderGroup> shaderGroups;
-	//std::vector<RigidBody*> ballList;
-	//std::vector<RigidBody*> wallList;
 	std::vector<RigidBody*> objs;
 	void SetLight(Shader* shader);
 	void SetBoundary();

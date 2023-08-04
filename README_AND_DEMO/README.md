@@ -21,24 +21,41 @@ In Main.cpp, you can easily umcomment the code piece to see the result of differ
 ### Data Structures <br />
 **RigidBody** <br />
 The representation of rigid body which contains object models, positions, axis-aligned bounding box (AABB) and information regarding dynamics such as linear velocity, angular velocity <br />
-![RidgidBody](RigidBody.png) <br />
+![RidgidBody](RigidBody.png) <br /> <br />
 
 **SAH-BVH** <br />
-A top-down constructed Bounding Volume Hireharchy Tree that contains all objects. Each leaf node contains one rigid body. The split is chosen to minimize the total surface area of the two new volumes, as estimated by the Surface Area Heuristic (SAH). This data structure is crucial for both ray-AABB intersection, and AABB-AABB intersection, which are the two most important ways of collision in this project.
-![BVH](SAH-BVH.png) <br />
+A top-down constructed Bounding Volume Hireharchy Tree that contains all objects. Each leaf node contains one rigid body. The split is chosen to minimize the total surface area of the two new volumes, as estimated by the Surface Area Heuristic (SAH). This data structure is crucial for both ray-AABB intersection, and AABB-AABB intersection, which are the two most important ways of collision in this project(This is an extra data structure I designed, which was not included in the proposal). <br />
+![BVH](SAH-BVH.png) <br /> <br />
 
 **Bounding Volume** <br />
 Simple AABB bounding volume was used in this project
-![AABB](AABB.png) <br />
+![AABB](AABB.png) <br /> <br />
 
 **Colliders** <br />
 There are only two colliders in this project: Ray and AABB bounding box
-![Collision](Collision.png) <br />
+![Collision](Collision.png) <br /><br />
 
+**MouseRaycasting and RigidBodyPicker** <br />
+They work together to complete the function of raycasting. MouseRaycasting generates the world coordinate ray direction produced by mouse click and RigidBodyPicker uses that ray to find the 
+rigid body that's selected by the ray using Ray-AABB intersection. <br />
+MouseRaycasting: <br />
+![MouseRaycasting](MouseRaycasting.png) <br />
+Click() function in RigidBodyPicker that's responsible for rigid body selection: <br />
+![Click_RigidBodyPicker](Click_RigidBodyPicker.png) <br /> <br />
 
+**Simulation** <br />
+Simulation is arguably the most important data structer in this project. It contains all rigid body objects in the scene, renders all rigid bodies + bounding volumes for each rigid bodies(press 'G'if you want to see them), performs collision and updates the position of each rigid bodies, and builds/updates BVH and bounding volumes of each rigid bodies. <br />
+![Simulation](Simulation.png) <br /> <br />
 
+**Mesh loading, Model loading and Shader** <br />
+In this project, model loading and rendering is not the major focus since it's more about physics based animation. So I've used existing code online for accomplishing these purposes. <br /> <br />
+Source: https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/shader.h <br />
+Existing code used from this online source: **shader.h** <br /> <br />
+Source: https://blog.csdn.net/manipu1a/article/details/85340045 <br />
+Existing code used from this online source: **mesh.h, model.h, shader_light.vs, shader_light.fs** <br /><br />
 
-
+## User Interface <br />
+Here is the code for user interface, I think it's quite self-explainatory: <br />
 
 
 

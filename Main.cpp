@@ -345,7 +345,7 @@ void mouse_click_callback(GLFWwindow* window, int button, int action, int mods)
         {
         case GLFW_MOUSE_BUTTON_LEFT:
             simulation->ResetSelectStatus();
-            ray = raycast.GenerateMouseRay2(lastX, lastY, globalWidth, globalHeight, projection, view);
+            ray = raycast.GenerateMouseRay(lastX, lastY, globalWidth, globalHeight, projection, view);
             if (fireRay == 2) {
                 // determine if force is big enough to "break" objects
                 if (forceStrength > 10.0f) {
@@ -400,8 +400,8 @@ Simulation* createSimulation()
     
     mainShader = new Shader("resources/shaders/shader_light.vs", "resources/shaders/shader_light.fs");
     //objModel = new Model(std::string("resources/media/cube2.obj")); // change objects here (Big Cube)
-    //objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj")); // change objects here (Prefractured Cube)
-    objModel = new Model(std::string("resources/media/Teapot_Fractured.obj"));     // change objects here (Prefractured Teapot)
+    objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj")); // change objects here (Prefractured Cube)
+    //objModel = new Model(std::string("resources/media/Teapot_Fractured.obj"));     // change objects here (Prefractured Teapot)
     quad = new Model(std::string("resources/media/wall.obj"));
 
     Shader* treeShader = new Shader("resources/shaders/shader_color.vs", "resources/shaders/shader_color.fs");
