@@ -5,13 +5,6 @@
 
 namespace BVHierarchy
 {
-	enum class Tree
-	{
-		TOP_DOWN_MEDIAN_SPLIT,
-		TOP_DOWN_K_EVEN_SPLIT,
-		TOP_DOWN_MEDIAN_EXTENTS_SPLIT
-	};
-
 	struct Node
 	{
 		enum class Type

@@ -10,7 +10,22 @@ In this project, I implemented a fracure simulation using the prefractured model
 ## How to run program
 The program should be built/run on Windows 10/11 with a either Visual Studio 2019 or 2022. Any graphics card that come with OpenGL 4.6 should be able to run this program without any problems(tested across different Windows PCs). My apologies for not having a proper Makefile; my time to finish the project was quite tight.
 
-After opening the CollodeSimulation.sln, simply use the DEBUG/RELEASE mode to run the program. There no command line parameters required
+After opening the CollodeSimulation.sln, simply use the DEBUG/RELEASE mode to run the program. There no command line parameters required.
+
+In Main.cpp, you can easily umcomment the code piece to see the result of different objective demo and change the object(objModel) loaded by the program.
+
+![DEMO_CODE](how_to_run_demo.png) <br />
+
+## Implementation <br />
+
+### Data Structures <br />
+**RigidBody** <br />
+The representation of rigid body which contains object models, positions, and information regarding dynamics such as linear velocity, angular velocity <br />
+![RidgidBody](RigidBody.png) <br />
+
+
+
+
 
 
 

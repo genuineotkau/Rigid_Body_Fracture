@@ -18,28 +18,9 @@ bool Collision::PointAABB(const glm::vec3& p, const AABB& a)
 	}
 	return true;
 }
-
-bool Collision::PointPlane(const glm::vec3& p, const Plane& t)
-{
-	if (glm::dot(t.normal, p) == t.d) return true;
-	else return false;
-}
-
 #pragma endregion
 
 #pragma region Ray
-bool Collision::RayPlane(const Ray& ray, const Plane& p, float& t, glm::vec3& q)
-{
-	glm::vec3 ab = ray.direction;
-	t = (p.d - glm::dot(p.normal, ray.start)) / glm::dot(p.normal, ab);
-
-	if (t >= 0.0f) {
-		q = t * ab;
-		return true;
-	}
-	return false;
-}
-
 // using slab method to determine if ray intersects AABB
 bool Collision::RayAABB(const Ray& r, const AABB& a, float& tmin, glm::vec3& q)
 {
@@ -106,36 +87,7 @@ bool Collision::AABBAABB(const AABB& a, const AABB& b)
 	}
 	return true;
 }
-
-bool Collision::AABBPlane(const AABB& b, const Plane& p)
-{
-	// center
-	glm::vec3 c = (b.max + b.min) * 0.5f;
-	// extents
-	glm::vec3 e = b.max - c;
-	// projection interval radius of b: L = b.c + t * p.n
-	float r = e[0] * std::abs(p.normal[0]) + e[1] * std::abs(p.normal[1]) + e[2] * std::abs(p.normal[2]);
-	// distance of box center from plane
-	float s = glm::dot(p.normal, c) - p.d;
-	// -r <= s <= r
-	return std::abs(s) <= r;
-}
-
 #pragma endregion
-
-
-glm::vec3 Collision::ClosestPtPointAABB(glm::vec3 p, AABB b)
-{
-	// clamp
-	glm::vec3 ret;
-	for (int i = 0; i < 3; i++) {
-		float v = p[i];
-		if (v < b.min[i]) v = b.min[i]; // v = max(v, b.min[i])
-		if (v > b.max[i]) v = b.max[i]; // v = min(v, b.max[i])
-		ret[i] = v;
-	}
-	return ret;
-}
 
 // Using extents here to get surface area
 float Collision::AABB::GetSurfaceArea()

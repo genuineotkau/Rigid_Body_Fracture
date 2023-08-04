@@ -47,9 +47,7 @@ public:
 	float rotationAngle;
 	float angularVel;
 	float mass;
-
 	float offsetY;
-
 
 	// BV
 	Collision::AABB aabb{ glm::vec3(0.f), glm::vec3(0.f) };
@@ -75,8 +73,6 @@ public:
 	}
 
 	bool IsPieces() { return mesh != nullptr; }
-
-	
 
 	Shader* shader;
 };
