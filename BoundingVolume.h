@@ -10,7 +10,7 @@ namespace BoundingVolume
 {
 	Collision::AABB createAABB(std::vector<glm::vec3>& vertices);
 
-	std::pair<float, float> getExtents(RigidBody* obj, char axis);
+	glm::vec3 getExtents(RigidBody* obj);
 
 };
 

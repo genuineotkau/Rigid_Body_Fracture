@@ -81,7 +81,7 @@ Model* quad;
 bool hideObjs = false;
 // 0: not generate ray, 1: generate ray but not apply force, 2: generate ray and apply force
 int fireRay = 0;
-bool showAABB = true;
+bool showAABB = false;
 bool triggerDemo3 = false;
 float forceStrength = 0.0f;
 float duration = 0.0f;
@@ -111,7 +111,7 @@ int main()
     // glfw: initialize and configure
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw window creation
@@ -350,6 +350,7 @@ void mouse_click_callback(GLFWwindow* window, int button, int action, int mods)
             //ray = glm::vec3(0.0, 0.0, -1);
             //picker.Pick(simulation->objs, ray);
             if (fireRay == 2) {
+                // determine if force is big enough to "break" objects
                 if (forceStrength > 10.0f) {
                     for (int i = 0; i < simulation->objs.size(); ++i) {
                         if (simulation->objs[i]->IsStatic()) continue;
@@ -395,19 +396,19 @@ void mouse_click_callback(GLFWwindow* window, int button, int action, int mods)
     return;
 }
 
-
+// Demo is here
 Simulation* createSimulation()
 {
     simulation = new Simulation();
     
     mainShader = new Shader("resources/shaders/shader_light.vs", "resources/shaders/shader_light.fs");
-    objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj"));
-    //objModel = new Model(std::string("resources/media/Teapot_Fractured.obj"));
+    //objModel = new Model(std::string("resources/media/cube2.obj")); // change objects here (Big Cube)
+    //objModel = new Model(std::string("resources/media/Plain_Cube_Fractured.obj")); // change objects here (Prefractured Cube)
+    objModel = new Model(std::string("resources/media/Teapot_Fractured.obj"));     // change objects here (Prefractured Teapot)
     quad = new Model(std::string("resources/media/wall.obj"));
 
     Shader* treeShader = new Shader("resources/shaders/shader_color.vs", "resources/shaders/shader_color.fs");
     Model* cube = new Model(std::string("resources/media/cube2.obj"));
-    //Model* cube = new Model(std::string("resources/media/teapot.obj"));
     simulation->SetLight(mainShader);
     simulation->treeModel = cube;
     simulation->treeShader = treeShader;
@@ -418,8 +419,8 @@ Simulation* createSimulation()
     //Demo4();
     //Demo5();
     //Demo6();
-    //Demo7();
-    Demo8();
+    Demo7();
+    //Demo8();
 
 
     simulation->SetBoundary();
@@ -492,7 +493,8 @@ void Demo7()
     mainShader->setBool("isColorMode", true);
     forceStrength = 15.0f;
     duration = 1.0f;
-    simulation->isCheckMode = true;
+    //simulation->isCheckMode = true;
+    simulation->is_Demo7 = true;
     DemoCollision();
 }
 

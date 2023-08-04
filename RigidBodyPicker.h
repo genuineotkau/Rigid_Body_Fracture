@@ -95,62 +95,9 @@ public:
 			return nullptr;
 		}
 		delta = q;
+		//debug: print out delta
+		//cout << "delta: " << delta.x << " " << delta.y << " " << delta.z << endl;
 		return res->data;
-
-
-		//auto bvh_nodes = simulation->GetLinearBVHNodes();
-		//std::stack<int> nodesToVisit;
-		//int cur_node_index = 0;
-		//while (true)
-		//{
-		//	auto node = bvh_nodes[cur_node_index];
-		//	//if (node.boundingbox.isIntersect(ray, XMMatrixIdentity()))
-		//	float tmin; 
-		//	glm::vec3 q;
-		//	Collision::Ray ray(this->camera->Position, rayDir);
-		//	if (Collision::RayAABB(ray, node->BV_AABB, tmin, q))
-		//	{
-		//		if (node->numObjects > 0)
-		//		{
-		//			for (int i = 0; i < node->numObjects; i++)
-		//			{
-		//				float t = -1.0f;
-		//				Primitive* p = objectManager.getBVHManager()->getPrimitive(node.primitivesOffset + i);
-		//				IntersectInfo it;
-		//				if (p->is_intersect(ray, t, it) && (min_t < 0.0f || t < min_t))
-		//				{
-		//					min_t = t;
-		//					info = it;
-		//				}
-		//			}
-		//			if (nodesToVisit.empty())
-		//				break;
-		//			cur_node_index = nodesToVisit.top();
-		//			nodesToVisit.pop();
-		//		}
-		//		else
-		//		{
-		//			if (ray.dirIsNeg(node.axis))
-		//			{
-		//				nodesToVisit.push(cur_node_index + 1);
-		//				cur_node_index = node.secondChildOfset;
-
-		//			}
-		//			else
-		//			{
-		//				nodesToVisit.push(node.secondChildOfset);
-		//				cur_node_index++;
-		//			}
-		//		}
-		//	}
-		//	else
-		//	{
-		//		if (nodesToVisit.empty())
-		//			break;
-		//		cur_node_index = nodesToVisit.top();
-		//		nodesToVisit.pop();
-		//	}
-		//}
 	}
 private:
 	Camera* camera;

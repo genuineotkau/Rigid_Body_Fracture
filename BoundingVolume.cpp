@@ -20,27 +20,14 @@ namespace BoundingVolume
 		return Collision::AABB(Min, Max);
 	}
 
-	std::pair<float, float> getExtents(RigidBody* obj, char axis)
+	glm::vec3 getExtents(RigidBody* obj)
 	{
-		std::pair<float, float> result;
-		//if (renderSphere == false) // get AABB extents
-		//{
-			if (axis == 'x')
-			{
-				result.first = obj->position.x - obj->aabb.min.x;
-				result.second = obj->position.x + obj->aabb.max.x;
-			}
-			else if (axis == 'y')
-			{
-				result.first = obj->position.y - obj->aabb.min.y;
-				result.second = obj->position.y + obj->aabb.max.y;
-			}
-			else if (axis == 'z')
-			{
-				result.first = obj->position.z - obj->aabb.min.z;
-				result.second = obj->position.z + obj->aabb.max.z;
-			}
-		//}
+
+		glm::vec3 result = (obj->aabb.max - obj->aabb.min) / 2.0f;
+		result.x = abs(result.x);
+		result.y = abs(result.y);
+		result.z = abs(result.z);
+
 		return result;
 	}
 }

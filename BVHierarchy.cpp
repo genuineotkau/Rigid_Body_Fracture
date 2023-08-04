@@ -1,7 +1,4 @@
 #include "BVHierarchy.h"
-//#include "SimpleScene_Quad.h"
-
-//#define K_CUTS 10.f //10-even SPLITS
 
 namespace BVHierarchy
 {
@@ -37,8 +34,6 @@ namespace BVHierarchy
 	void TopDownBVTree(Node** tree, std::vector<RigidBody*>& objects, int startIndex, int endIndex, int depth)
 	{
 		int numObjects = endIndex - startIndex + 1;
-		//if (startIndex == endIndex)
-		//	numObjects = 1;
 		const int MIN_OBJECTS_PER_LEAF = 1;
 		Node* pNode = new Node;
 		*tree = pNode;
@@ -74,15 +69,10 @@ namespace BVHierarchy
 	{
 		if (numObjects == 1.f) //no child
 		{
-			//Collision::Sphere leftSphere = ComputeBoundingSphere(objects, startIndex, split);
-			//return leftSphere.GetSurfaceArea();
 			Collision::AABB leftAABB = ComputeBoundingVolume(objects, startIndex, split);
 			return leftAABB.GetSurfaceArea();
-
 		}
 			
-		/*Collision::AABB parentAABB = ComputeBoundingVolume(&objects[0], numObjects);
-		float parentSurfaceArea = parentAABB.GetSurfaceArea();*/
 		Collision::AABB leftAABB = ComputeBoundingVolume(objects, startIndex, split);
 		float leftSurfaceArea = leftAABB.GetSurfaceArea();
 		Collision::AABB rightAABB = ComputeBoundingVolume(objects, split + 1, numObjects);

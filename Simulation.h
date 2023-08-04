@@ -32,6 +32,7 @@ public:
 	Shader* treeShader;
 
 	bool isCheckMode = false;
+	bool is_Demo7 = false;
 	bool skipCheckStatic = false;
 
 private:

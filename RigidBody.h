@@ -33,6 +33,7 @@ public:
 	void UpdateVelocity(GLfloat deltaTime);
 	void Move(GLfloat deltaTime);
 	void Render();
+	void ClearAllMovement();
 
 	glm::vec3 position;
 	glm::vec3 force;

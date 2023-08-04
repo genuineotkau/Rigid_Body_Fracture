@@ -61,3 +61,14 @@ void RigidBody::Render()
     }
 }
 
+void RigidBody::ClearAllMovement() {
+    this -> force = glm::vec3(0.0f);
+    this -> acceleration = glm::vec3(0.0f);
+    this -> instantAcceleration = glm::vec3(0.0f);
+    this -> instantForceDuration = 0.0f;
+    this -> velocity = glm::vec3(0.0f);
+    this -> angularVel = 0.0f;
+    this -> torque = glm::vec3(0.0f);
+    this -> rotationAngle = 0.0f;
+}
+
