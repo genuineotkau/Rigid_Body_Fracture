@@ -1,5 +1,4 @@
 # CS488 Final Project HongFei Huang (Fracture Simulation)
-### The maximum late days(3) are used for this project.
 <br />
 <br />
 
