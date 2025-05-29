@@ -2,3 +2,4 @@
 /.vs
 /README_AND_DEMO/video.mp4
 CollideSimulation.vcxproj.user
+*.tlog
