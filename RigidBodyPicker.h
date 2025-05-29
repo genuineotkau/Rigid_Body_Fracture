@@ -44,8 +44,8 @@ public:
 			}
 		}
 
-		Traversal(node->lChild, ray, res, t, intersection);
-		Traversal(node->rChild, ray, res, t, intersection);
+		Traversal(node->lChild, ray, res, tmin, intersection);
+		Traversal(node->rChild, ray, res, tmin, intersection);
 	}
 
 

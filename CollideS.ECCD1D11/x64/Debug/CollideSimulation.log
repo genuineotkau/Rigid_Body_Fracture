@@ -1,0 +1,41 @@
+﻿  Collision.cpp
+  Main.cpp
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Dependencies\GIF\gif.h(376,23): warning C4334: “<<”: 32 位移位的结果被隐式转换为 64 位(是否希望进行 64 位移位?)
+  (编译源文件“Main.cpp”)
+  
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Dependencies\GIF\gif.h(377,26): warning C4334: “<<”: 32 位移位的结果被隐式转换为 64 位(是否希望进行 64 位移位?)
+  (编译源文件“Main.cpp”)
+  
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Shader.h(58,40): warning C4101: “e”: 未引用的局部变量
+  (编译源文件“Main.cpp”)
+  
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Mesh.h(153,50): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+  (编译源文件“Main.cpp”)
+  
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\MouseRaycasting.h(33,16): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+  (编译源文件“Main.cpp”)
+  
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\MouseRaycasting.h(34,16): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+  (编译源文件“Main.cpp”)
+  
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\MouseRaycasting.h(47,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+  (编译源文件“Main.cpp”)
+  
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\MouseRaycasting.h(48,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+  (编译源文件“Main.cpp”)
+  
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(159,28): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(230,33): warning C4305: “初始化”: 从“double”到“float”截断
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(231,24): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(317,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(324,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(325,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(329,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(330,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(332,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(333,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(369,29): warning C4305: “初始化”: 从“double”到“float”截断
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(469,15): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\Main.cpp(512,147): warning C4305: “参数”: 从“double”到“float”截断
+  正在生成代码...
+  CollideSimulation.vcxproj -> C:\Users\hhf20\Google_Drive\我的云端硬盘\Undergrad\S2023_4A\CS488\Rigid_Body_Fracture\x64\Debug\CollideSimulation.exe

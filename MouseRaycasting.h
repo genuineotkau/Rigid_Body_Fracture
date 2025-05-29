@@ -35,7 +35,8 @@ public:
 		glm::mat4 invVP = glm::inverse(proj * view);
 		glm::vec4 screenPos = glm::vec4(mouseX, -mouseY, 1.0f, 1.0f);
 		glm::vec4 worldPos = invVP * screenPos;
-		glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
+		worldPos /= worldPos.w;  // Perspective division
+		glm::vec3 dir = glm::normalize(glm::vec3(worldPos) - camera->Position);
 		return dir;
 	}
 
